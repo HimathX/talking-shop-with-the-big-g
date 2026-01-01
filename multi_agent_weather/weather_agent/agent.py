@@ -27,7 +27,7 @@ def get_weather(city: str, date: str) -> str:
     city_lower = city.lower()
     date_lower = date.lower()
     # Simple hardcoded conditions for demo:
-    if "rain" in city_lower or "london" in city_lower:
+    if "rain" in city_lower or "london" in city_lower or "india" in city_lower:
         forecast = "rainy"
     elif date_lower in ("saturday", "sunday"):
         # assume weekends are rainy in this dummy logic
