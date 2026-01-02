@@ -17,6 +17,12 @@ The system consists of two primary agents:
     *   **Function**: Helps users plan trips. Connects to `WeatherAgent` to fetch real-time weather data when needed.
     *   **Tech**: Uses `RemoteA2aAgent` client to send requests to the WeatherAgent service.
 
+## 📇 Agent Card
+
+The **Weather Agent** publishes its metadata (capabilities, tools) at a standard "well-known" URL. When running locally on port 8000:
+
+*   **URL**: `http://localhost:8000/.well-known/agent-card.json`
+
 ## 🛠️ Prerequisites
 
 *   **Python**: v3.12+
