@@ -1,0 +1,36 @@
+{
+  "name": "personal-finance-agent-multiturn",
+  "version": "1.0.0",
+  "description": "Personal Finance Review Agent - Multi-Turn Conversation Example for ADK",
+  "main": "demo/agent.ts",
+  "scripts": {
+    "dev": "npx @google/adk-devtools run demo/agent.ts",
+    "demo": "bun run demo/simulate-conversation.ts",
+    "demo-server": "bun run simulate-server-conversation.ts",
+    "demo-server-auto": "bun run simulate-server-conversation.ts --start-server",
+    "web": "npx @google/adk-devtools web",
+    "serve": "bun run server.ts",
+    "build": "tsc",
+    "start": "node dist/agent.js"
+  },
+  "keywords": [
+    "adk",
+    "agent",
+    "finance",
+    "multi-turn",
+    "session-management",
+    "typescript"
+  ],
+  "author": "DevFest 2025 Sri Lanka",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@google/adk": "^0.2.0",
+    "@google/adk-devtools": "^0.2.0",
+    "@google/genai": "1.32.0",
+    "hono": "^4.11.3",
+    "zod": "^3.22.4"
+  }
+}
