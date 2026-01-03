@@ -95,37 +95,6 @@ wheels = [
 ]
 
 [[package]]
-name = "bidi-demo"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "fastapi" },
-    { name = "google-adk" },
-    { name = "python-dotenv" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", specifier = ">=0.115.0" },
-    { name = "google-adk", specifier = ">=1.20.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24.0" },
-    { name = "python-dotenv", specifier = ">=1.0.0" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.32.0" },
-]
-provides-extras = ["dev"]
-
-[package.metadata.requires-dev]
-dev = []
-
-[[package]]
 name = "cachetools"
 version = "6.2.4"
 source = { registry = "https://pypi.org/simple" }
@@ -432,7 +401,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -2578,6 +2547,37 @@ sdist = { url = "https://files.pythonhosted.org/packages/90/76/437d71068094df072
 wheels = [
     { url = "https://files.pythonhosted.org/packages/49/4b/359f28a903c13438ef59ebeee215fb25da53066db67b305c125f1c6d2a25/sqlparse-0.5.5-py3-none-any.whl", hash = "sha256:12a08b3bf3eec877c519589833aed092e2444e68240a3577e8e26148acc7b1ba", size = 46138, upload-time = "2025-12-19T07:17:46.573Z" },
 ]
+
+[[package]]
+name = "sri-lanka-guide"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "fastapi" },
+    { name = "google-adk" },
+    { name = "python-dotenv" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.115.0" },
+    { name = "google-adk", specifier = ">=1.20.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24.0" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.32.0" },
+]
+provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = []
 
 [[package]]
 name = "sse-starlette"
