@@ -1,5 +1,5 @@
 /**
- * app.js: JS code for the ADK Bidi-streaming demo app.
+ * app.js: Sri Lanka Tourist Guide application JavaScript
  */
 
 /**
@@ -7,8 +7,8 @@
  */
 
 // Connect the server with a WebSocket connection
-const userId = "demo-user";
-const sessionId = "demo-session-" + Math.random().toString(36).substring(7);
+const userId = "tourist-user";
+const sessionId = "tour-session-" + Math.random().toString(36).substring(7);
 let websocket = null;
 let is_audio = false;
 

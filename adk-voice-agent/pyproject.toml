@@ -1,7 +1,7 @@
 [project]
-name = "bidi-demo"
+name = "sri-lanka-guide"
 version = "0.1.0"
-description = "ADK Bidi-streaming demo application"
+description = "AI-powered Sri Lanka tourist guide application built with Google ADK"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -33,5 +33,5 @@ dev-dependencies = []
 packages = ["app"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"app/static" = "share/bidi-demo/static"
-"app/.env" = "share/bidi-demo/.env.template"
+"app/static" = "share/sri-lanka-guide/static"
+"app/.env" = "share/sri-lanka-guide/.env.template"

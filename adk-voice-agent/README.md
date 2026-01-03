@@ -1,12 +1,12 @@
-# ADK Bidi-streaming Demo
+# Sri Lanka Tourist Guide
 
-A working demonstration of real-time bidirectional streaming with Google's Agent Development Kit (ADK). This FastAPI application showcases WebSocket-based communication with Gemini models, supporting multimodal requests (text, audio, and image/video input) and flexible responses (text or audio output).
+An AI-powered tourist guide application built with Google's Agent Development Kit (ADK). This interactive FastAPI application provides real-time bidirectional streaming communication with Gemini models, helping visitors explore and discover the beautiful island of Sri Lanka through multimodal conversations (text, audio, and image input) and flexible responses (text or audio output).
 
 ![bidi-demo-screen](assets/bidi-demo-screen.png)
 
 ## Overview
 
-This demo implements the complete ADK bidirectional streaming lifecycle:
+This tourist guide application implements the complete ADK bidirectional streaming lifecycle:
 
 1. **Application Initialization**: Creates `Agent`, `SessionService`, and `Runner` at startup
 2. **Session Initialization**: Establishes `Session`, `RunConfig`, and `LiveRequestQueue` per connection
@@ -21,7 +21,21 @@ This demo implements the complete ADK bidirectional streaming lifecycle:
 - **Session Resumption**: Reconnection support configured via `RunConfig`
 - **Concurrent Tasks**: Separate upstream/downstream async tasks for optimal performance
 - **Interactive UI**: Web interface with event console for monitoring Live API events
-- **Google Search Integration**: Agent equipped with `google_search` tool
+- **Google Search Integration**: Agent equipped with `google_search` tool for up-to-date information
+- **Sri Lanka Expertise**: Comprehensive knowledge about tourist attractions, culture, cuisine, and travel tips
+
+## What You Can Ask
+
+The Sri Lanka Tourist Guide can help you with:
+
+- **Tourist Attractions**: Sigiriya Rock Fortress, Temple of the Tooth, Galle Fort, Dambulla Cave Temple, and more
+- **Beaches**: Mirissa, Unawatuna, Arugam Bay, Nilaveli, Bentota
+- **Wildlife & Nature**: Yala National Park, Udawalawe, Sinharaja Rainforest, elephant safaris
+- **Cultural Experiences**: Traditional dance performances, tea plantation tours, Buddhist temples
+- **Local Cuisine**: Rice and curry, hoppers, kottu roti, seafood specialties
+- **Travel Planning**: Best times to visit, transportation options, accommodation recommendations
+- **Adventure Activities**: Surfing, diving, hiking, whale watching
+- **Cultural Customs**: Etiquette, dress codes, tipping practices
 
 ## Architecture
 
@@ -100,6 +114,9 @@ GOOGLE_API_KEY=your_api_key_here
 # Model selection (optional, defaults to native audio model)
 # See "Supported Models" section below for available model names
 DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
+
+# OpenWeather (for current city weather)
+OPENWEATHER_API_KEY=your_openweather_api_key_here
 ```
 
 #### Getting API Credentials

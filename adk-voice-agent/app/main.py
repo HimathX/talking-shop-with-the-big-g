@@ -1,15 +1,17 @@
-"""FastAPI application demonstrating ADK Bidi-streaming with WebSocket."""
+"""FastAPI application for Sri Lanka Tourist Guide with ADK Bidi-streaming."""
 
 import asyncio
 import json
 import logging
 import warnings
 from pathlib import Path
+from typing import Dict, Any
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from google.adk.agents.live_request_queue import LiveRequestQueue
 from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.adk.runners import Runner
@@ -34,7 +36,7 @@ logger = logging.getLogger(__name__)
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
 # Application name constant
-APP_NAME = "bidi-demo"
+APP_NAME = "sri-lanka-guide"
 
 # ========================================
 # Phase 1: Application Initialization (once at startup)
@@ -53,6 +55,40 @@ session_service = InMemorySessionService()
 runner = Runner(app_name=APP_NAME, agent=agent, session_service=session_service)
 
 # ========================================
+# WebRTC Session Storage
+# ========================================
+
+# In-memory storage for WebRTC sessions
+webrtc_sessions: Dict[str, Dict[str, Any]] = {}
+
+# ========================================
+# Pydantic Models for WebRTC
+# ========================================
+
+
+class WebRTCOffer(BaseModel):
+    """WebRTC offer from client."""
+
+    sdp: str
+    type: str  # Should be "offer"
+
+
+class WebRTCAnswer(BaseModel):
+    """WebRTC answer from server."""
+
+    sdp: str
+    type: str  # Should be "answer"
+
+
+class ICECandidate(BaseModel):
+    """ICE candidate for WebRTC connection."""
+
+    candidate: str
+    sdpMid: str
+    sdpMLineIndex: int
+
+
+# ========================================
 # HTTP Endpoints
 # ========================================
 
@@ -61,6 +97,182 @@ runner = Runner(app_name=APP_NAME, agent=agent, session_service=session_service)
 async def root():
     """Serve the index.html page."""
     return FileResponse(Path(__file__).parent / "static" / "index.html")
+
+
+# ========================================
+# WebRTC Endpoints
+# ========================================
+
+
+@app.post("/webrtc/offer/{user_id}/{session_id}")
+async def webrtc_offer(user_id: str, session_id: str, offer: WebRTCOffer):
+    """Handle WebRTC offer from client.
+
+    Args:
+        user_id: User identifier
+        session_id: Session identifier
+        offer: WebRTC offer containing SDP
+
+    Returns:
+        WebRTC answer with SDP
+    """
+    logger.debug(f"Received WebRTC offer for user_id={user_id}, session_id={session_id}")
+    logger.debug(f"Offer SDP: {offer.sdp[:100]}...")
+
+    # Store the session
+    session_key = f"{user_id}:{session_id}"
+    if session_key not in webrtc_sessions:
+        webrtc_sessions[session_key] = {
+            "user_id": user_id,
+            "session_id": session_id,
+            "offer": offer.model_dump(),
+            "ice_candidates": [],
+        }
+    else:
+        webrtc_sessions[session_key]["offer"] = offer.model_dump()
+
+    # In a real implementation, you would:
+    # 1. Process the SDP offer
+    # 2. Set up media streams
+    # 3. Generate an SDP answer
+    # For now, return a placeholder answer
+    answer = {
+        "sdp": "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\n",
+        "type": "answer",
+    }
+
+    logger.debug(f"Sending WebRTC answer for session_key={session_key}")
+    return JSONResponse(content=answer)
+
+
+@app.post("/webrtc/answer/{user_id}/{session_id}")
+async def webrtc_answer(user_id: str, session_id: str, answer: WebRTCAnswer):
+    """Handle WebRTC answer from client.
+
+    Args:
+        user_id: User identifier
+        session_id: Session identifier
+        answer: WebRTC answer containing SDP
+
+    Returns:
+        Success confirmation
+    """
+    logger.debug(f"Received WebRTC answer for user_id={user_id}, session_id={session_id}")
+    logger.debug(f"Answer SDP: {answer.sdp[:100]}...")
+
+    session_key = f"{user_id}:{session_id}"
+    if session_key not in webrtc_sessions:
+        webrtc_sessions[session_key] = {
+            "user_id": user_id,
+            "session_id": session_id,
+            "ice_candidates": [],
+        }
+
+    webrtc_sessions[session_key]["answer"] = answer.model_dump()
+    logger.debug(f"Stored WebRTC answer for session_key={session_key}")
+
+    return JSONResponse(content={"status": "success"})
+
+
+@app.post("/webrtc/ice-candidate/{user_id}/{session_id}")
+async def add_ice_candidate(user_id: str, session_id: str, candidate: ICECandidate):
+    """Handle ICE candidate from client.
+
+    Args:
+        user_id: User identifier
+        session_id: Session identifier
+        candidate: ICE candidate
+
+    Returns:
+        Success confirmation
+    """
+    logger.debug(
+        f"Received ICE candidate for user_id={user_id}, session_id={session_id}"
+    )
+    logger.debug(f"ICE candidate: {candidate.candidate[:100]}...")
+
+    session_key = f"{user_id}:{session_id}"
+    if session_key not in webrtc_sessions:
+        webrtc_sessions[session_key] = {
+            "user_id": user_id,
+            "session_id": session_id,
+            "ice_candidates": [],
+        }
+
+    webrtc_sessions[session_key]["ice_candidates"].append(candidate.model_dump())
+    logger.debug(
+        f"Stored ICE candidate for session_key={session_key}, "
+        f"total candidates: {len(webrtc_sessions[session_key]['ice_candidates'])}"
+    )
+
+    return JSONResponse(content={"status": "success"})
+
+
+@app.get("/webrtc/ice-candidates/{user_id}/{session_id}")
+async def get_ice_candidates(user_id: str, session_id: str):
+    """Get ICE candidates for a session.
+
+    Args:
+        user_id: User identifier
+        session_id: Session identifier
+
+    Returns:
+        List of ICE candidates
+    """
+    session_key = f"{user_id}:{session_id}"
+
+    if session_key not in webrtc_sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    candidates = webrtc_sessions[session_key].get("ice_candidates", [])
+    logger.debug(
+        f"Returning {len(candidates)} ICE candidates for session_key={session_key}"
+    )
+
+    return JSONResponse(content={"candidates": candidates})
+
+
+@app.get("/webrtc/session/{user_id}/{session_id}")
+async def get_webrtc_session(user_id: str, session_id: str):
+    """Get WebRTC session information.
+
+    Args:
+        user_id: User identifier
+        session_id: Session identifier
+
+    Returns:
+        WebRTC session information
+    """
+    session_key = f"{user_id}:{session_id}"
+
+    if session_key not in webrtc_sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    session_data = webrtc_sessions[session_key]
+    logger.debug(f"Returning WebRTC session info for session_key={session_key}")
+
+    return JSONResponse(content=session_data)
+
+
+@app.delete("/webrtc/session/{user_id}/{session_id}")
+async def delete_webrtc_session(user_id: str, session_id: str):
+    """Delete WebRTC session.
+
+    Args:
+        user_id: User identifier
+        session_id: Session identifier
+
+    Returns:
+        Success confirmation
+    """
+    session_key = f"{user_id}:{session_id}"
+
+    if session_key in webrtc_sessions:
+        del webrtc_sessions[session_key]
+        logger.debug(f"Deleted WebRTC session for session_key={session_key}")
+        return JSONResponse(content={"status": "success", "message": "Session deleted"})
+
+    raise HTTPException(status_code=404, detail="Session not found")
 
 
 # ========================================
